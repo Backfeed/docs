@@ -23,9 +23,9 @@ In the medium/long term, we may need:
 1. Put our tokens, and eventually the protocol, on the blockchain
 
 
-## Whats the problem?
+## What's the problem?
 
-Development on the protocol service progresses very very slowly, and is not 
+Development on the protocol service progresses very very slowly.
 
 One reason is the present codebase is very difficult to maintain and extend. 
 
