@@ -1,13 +1,13 @@
  BACKFEED PROTOCOL SERVICE
 --------------------------
 
-# What are we talking about
+## What are we talking about
 
 The Backfeed protocol service implements the Backfeed protocol and makes it available to the world.
 
 It is the most central *material* product that Backfeed produces, around which the whole Backfeed eco-system revolves.
 
-# What we want
+## What we want
 
 In the short term Backfeed needs:
 
@@ -23,7 +23,7 @@ In the medium/long term, we may need:
 1. Put our tokens, and eventually the protocol, on the blockchain
 
 
-# Whats the problem?
+## Whats the problem?
 
 Development on the protocol service progresses very very slowly, and is not 
 
@@ -34,13 +34,13 @@ One reason is the present codebase is very difficult to maintain and extend.
 * Backfeed does not want its central product to be essentially dependent on a private company such as Amazon
 
 
-#  How we solve it
+##  How we solve it
 
 We will migrate the code to a new stack, and rewrite the core functions.
 
 We will use established, "riskless", software stack, with a large community, and mature libraries.
 
-## Software Stack
+### Software Stack
 
 Our software stack can be divided three tiers
 
@@ -71,18 +71,18 @@ Specifically, I'd propose this:
 3. Postgresql
 
 
-# Risks
+## Risks
 
 1. Progress on the protocol stops while the migration is in progress
 1. Because the present code is not completely tested, knowledge may be lost during the rewriting (i.e. we may forget to migrate things already implemented, or have to reinvent things twice) 
 
-## Risk Mitigation
+### Risk Mitigation
 
 1. Given that we actually have no system in production that uses the service, and (as far as I know) no short term deadlines, this will not be a problem. Development on the frontend can continue against the existing service.
 2. We have Elad and Y
 That way, development does not need to stop completely, and if there are doubts about the meaning of certain parts of the code, they can help.
 
-# Estimated Time Line/Road map
+## Estimated Time Line/Road map
 
 [To be done]
 
