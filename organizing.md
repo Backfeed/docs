@@ -43,11 +43,11 @@ Automatic testing of all functionality is essential for garanteeing that our sof
 
 ## One-click deployment
 
-Any changes in frontend or backend should be put online with the least possible effort. This makes it possible to show changes or prototypes immediately to "the client" (in this case, "the client" = Matan and Primavera), and wil make resolving bugs or adding functionality much less painful
+Any changes in frontend or backend should be put online with the least possible effort. This makes it possible to show changes or prototypes immediately to "the client" (in this case, "the client" = Matan and Primavera), and will make resolving bugs or adding functionality much less painful.
 
 ## Write good API documentation for the service
 
-The API documentation serves as a "contract" between frontend and backend developers - it is like a domain specific language that both can understand, and frontend-developers can be very precise about their wishes by expressing them as proposed changes to the API.
+The API documentation serves as a "contract" between frontend and backend developers - it is like a domain specific language that can be understood by both. Then, frontend developers could be very precise about their wishes by expressing them as proposed changes to the API.
 
 ## Create a written specifiction of the protocol
 
@@ -61,21 +61,32 @@ Tests should be run automatically (on a remote server) daily, or even on each pu
 
 We can try out things like planning games or daily standup meetings, and see which works best for us. More importantly, it would be good if the team members who don't know what this is about started googling for "devops" and "agile" to get an idea.
 
+### Recommended Reading
+**Agile:**
+* [A Designer’s Introduction to “Agile” Methodology](http://webdesign.tutsplus.com/articles/a-designers-introduction-to-agile-methodology--cms-23349)
+* [Agile Web Development That Works](http://sixrevisions.com/web-development/agile/)
+
+**DevOps:**
+* [What Is a DevOps Engineer?](https://puppetlabs.com/blog/what-is-a-devops-engineer)
+* [What Is a DevOps Engineer?](http://techbeacon.com/7-devops-roles-you-need-succeed)
+* [Front-End Ops](https://www.smashingmagazine.com/2013/06/front-end-ops/)
+* [Defining the Ops in DevOps](http://stackify.com/defining-the-ops-in-devops/)
+
+
 ## Rewrite the protocol-service
 
 See [Protocol Service Roadmap](protocol_roadmap.md) 
 
-## Keep staging and production environments that are always up-to-date
+## Maintain staging and production environments that are always up-to-date
 
 [we have this now]
 
-Create a (semi-public) staging instance for both frontend and backend that shows the latest working version of the software. This will give everybody involved a way of measuring progress, catching problems with UX or functionality in all stages of development, and in general serves as an object point of discussion. 
+Create a (semi-public) staging instance for both frontend and backend that shows the latest working version of the software. This will give everybody involved a way of measuring progress, catching problems with UX or functionality in all stages of development, and in general serves as an objective point of discussion. 
 
 ## Have more systematic bug tracking
 
-Trello is fine for defining priorities and signalling problems in an informal way.  The github issue tracker has a more defined workflow, for assigning responsibilities, closing issues, and integration with github itself. We can consider using github issues for bugs and precise requests for software functionality.
+Trello is fine for defining priorities and signalling problems in an informal way. The github issue tracker has a more defined workflow, for assigning responsibilities, closing issues, and integration with github itself. We can consider using github issues for bugs and precise requests for software functionality.
 
 ## ?
 
 Please add anything else that may be useful 
-    
