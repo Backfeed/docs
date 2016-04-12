@@ -79,11 +79,30 @@ Specifically, I'd propose this:
 ### Risk Mitigation
 
 1. Given that we actually have no system in production that uses the service, and (as far as I know) no short term deadlines, this will not be a problem. Development on the frontend can continue against the existing service.
-2. We have Elad and Y
+2. 
 That way, development does not need to stop completely, and if there are doubts about the meaning of certain parts of the code, they can help.
 
 ## Estimated Time Line/Road map
 
-[To be done]
 
-I think we can do a complete code rewrite and have a service with the funtionality of the actual service deployed online in two or three weeks development time.
+Sprint 1
+
+* REST API first version online, with docs [jelle]
+    * create a define API
+    * integrate with Postgresql
+    * deployment
+* fix frontend issues that are not dependent on API availability or changes [amnon, ore]
+
+Sprint 2
+
+* integrate front-end with new API [ore]
+* address API issues that will inevitably come up [ore, jelle]
+* address Protocol issues that will inevitablye com up [elad, jelle]
+* get a decent deployment procedure in place [jelle, ore]
+* hallway testing [everyone]
+* have campaign ready [julian]
+
+The ambition is: sprint 1: less than a week, sprint 2: a week.
+
+
+
