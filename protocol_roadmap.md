@@ -91,7 +91,7 @@ Sprint 1
     * create a define API
     * integrate with Postgresql
     * deployment
-* fix frontend issues that are not dependent on API availability or changes [amnon, ore]
+* fix frontend issues that are not dependent on API availability or changes [amnon, ore, try to get some feedback from Matan and anyone else]
 
 Sprint 2
 
