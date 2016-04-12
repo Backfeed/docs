@@ -84,14 +84,15 @@ That way, development does not need to stop completely, and if there are doubts 
 
 ## Estimated Time Line/Road map
 
-
 Sprint 1
 
 * REST API first version online, with docs [jelle]
     * create a define API
     * integrate with Postgresql
     * deployment
-* fix frontend issues that are not dependent on API availability or changes [amnon, ore, try to get some feedback from Matan and anyone else]
+* fix frontend issues that are not dependent on API availability or changes [amnon, ore]
+    * try to get some feedback from Matan and anyone else
+    * reorganize the trello board, which has outdated categories
 
 Sprint 2
 
