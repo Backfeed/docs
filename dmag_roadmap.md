@@ -8,16 +8,13 @@
 
 **deadline:** monday April 18
 
-[**trello board**](https://trello.com/b/hj9QXDVt/dmagazine)
+The Trello board is [here](https://trello.com/b/hj9QXDVt/dmagazine)
 
 * API first version online, with docs [jelle]
-    * create a define API
-    * integrate with Postgresql
-    * deployment
 * fix frontend issues that are not dependent on API availability or changes [amnon, ore]
-    * try to get some feedback from Matan and anyone else
-    * reorganize the trello board, which has outdated categories
-* hallway testing [everyone, but mostly amnon]
+* reorganize the trello board (naomi?)
+* hallway testing of [the staging site](http://dmagbeta.backfeed.cc/) [everyone, but mostly amnon]
+
 
 ## Sprint 2
 
@@ -29,7 +26,7 @@
 * address API issues that will inevitably come up [ore, jelle]
 * address Protocol issues that will inevitablye com up [elad, jelle]
 * get a decent deployment procedure in place [jelle, ore]
-* hallway testing [everyone]
+* hallway testing of [the staging site](http://dmagbeta.backfeed.cc/) [everyone, but mostly amnon]
 * have campaign ready [julian]
 
 ## After this
