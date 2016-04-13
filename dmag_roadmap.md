@@ -18,7 +18,7 @@ The Trello board is [here](https://trello.com/b/hj9QXDVt/dmagazine)
 
 ## Sprint 2
 
-**goal:** production-ready website ("beta version")
+**goal:** website in production ("beta version")
 
 **deadline:** monday April 25 
 
@@ -34,3 +34,4 @@ The Trello board is [here](https://trello.com/b/hj9QXDVt/dmagazine)
 * Updates on the basis of user feedback 
 * Define and implement gamification ideas 
 * Items from the Trello backlog
+* [...]
