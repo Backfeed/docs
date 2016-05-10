@@ -60,11 +60,9 @@ Our task is to find a definition for this function that satisfies a number of re
 
 \section{Conditions on Reputation Flow}
 
-\footnote{Time locality (the Markov Property). jelle: I don't really understand this terminology. ``Time local'' just because I am ignorant. However, the Markov Property I think i understand, and if our transition system is considered as a Markov model, then the Markov property would mean: next reputation distribution only depends on current distribution {\em and nothing else}. This is clearly not desirable. So you are welcome to use these terms, but I am leaving them out for now :-). I think I do capture the spririt of the google doc in the first few requirements - time indepdence, contribution independence} 
+\subsection{Time Independence}
 
-\subsection{time independence}
-
-{\bf time independence:} Reputation flow of the i’th voter doesn’t rely on when he voted. Or, generelized, the {\em order} of the previous evaluations does not matter for calculating the new 
+{\bf time independence:} Reputation flow of the i’th voter doesn’t rely on when he voted. Or, generalized, the {\em order} of the previous evaluations does not matter for calculating the new 
 
 \begin{center}
 $F_{i,c,v}((e_1, ..., e_i, e_k, .. , e_m), {\bf r}) = F_{i,c,v}((e_1, ...., e_k, e_i, ... , e_m), {\bf r})$
@@ -72,40 +70,29 @@ $F_{i,c,v}((e_1, ..., e_i, e_k, .. , e_m), {\bf r}) = F_{i,c,v}((e_1, ...., e_k,
 
 \end{center}
 
-\subsection{contribution independence}
+\subsection{Contribution Independence}
 
 The reputation flow of resulting from the evaluation of a contribution $c$ should be independent of any previous evaluation of contributions other than $c$.
 
-For any history $h$ , if $h | c$ is just like $h$, but with all evaluations of contributions not equal to c removes. Then we have
+For any history $h$, define $h | c$ to be just like $h$, but with all evaluations of contributions not equal to c removed. Contribution Indipendence then can be formulated as:
 
 \begin{center}
 $F_{i,c,v}(h, {\bf r}) = F_{i,c,v}(h|c, {\bf r}) $
 \end{center}
 
-\subsection{linearity}
-
-The  reputation flow only depends on voters reputation linearly with their reputation (both the evaluator and the guy of which reputation is changing);
-
-I am not sure what the motivation for this is (other than simplicity, which is fine, but a different kind of requirement). 
-
-If $\delta_i$ is the difference between $i$'s reputation in ${\bf r}$ and $F_{i,c,v}(h, {\bf r})$, then we have that:
-\begin{center}
-$\delta_i = ??$ (I am not even really sure if I understand the requirement in general)
-\end{center}
-
-\subsection{split insensivity}
+\subsection{Split Insensivity}
 
 Split insensitivy means that it does not, everything else remaining equal, it should not matter that the effect on the system of two voters voting as a block (that is, always subequently and with corresponding votes), the effect on their combined reputation is the same as the effect on the information of a single agent that has the same reputation as the two combined.
 
 Formally, let $k$ be an agent in $N$ , $N[k/{i,j}]$ be like N, but with $k$ removed and two new agents $i$ and $j$ added.
 
-Similarly, let ${\bf r}[k/{i,j}]$ be a reputation distribution on $N[k/{i,j}]$, and let $h[k/{i,j}]$ be just like the history $h$, but with each evaluation $(k, c, v)$ substituted with $(i, c, v) (j, c, v)$.
+Similarly, let ${\bf r}[k/{i,j}]$ be a reputation distribution on $N[k/{i,j}]$, and let $h[k/{i,j}]$ be just like the history $h$, but with each evaluation $(k, c, v)$ substituted with $(i, c, v) (j, c, v)$.\footnote{todo: the formulation needs some cleaning up}
 
 Now, given all this preliminary notation, split insensitivity can be formulated is several ways:
 
 {\bf strong split insensititivy}: the reputation flow after an evaluation is indipendent of splitting:
 \begin{center}
-if $r_k = r[k/{i,j}]_i +r[k/{i,j}]_i$, then $F(h, {\bf r}) = F(h[k/{i,j}], {\bf r}[k/{i,j}])$
+if $r_k = r[k/{l,m}]_i +r[k/{l,m}]_i$, then $F(h, {\bf r})[k/{l, m}] = F(h[k/{i,j}], {\bf r}[k/{l,m}])$
 \end{center}
 
 
@@ -114,20 +101,69 @@ if $r_k = r[k/{i,j}]_i +r[k/{i,j}]_i$, then $F(h, {\bf r}) = F(h[k/{i,j}], {\bf 
 if $r_k = r[k/{i,j}]_i +r[k/{i,j}]_i$, then $F(h, {\bf r})_k = F(h[k/{i,j}], {\bf r}[k/{i,j}])_i + F(h[k/{i,j}], {\bf r}[k/{i,j}])_j$
 \end{center}
 
-\subsection{x}
-If all votes the same, earlier voter’s reputation gain > (or >=) to later voter’s
+
+\subsection{The earlier the better}
+
+``
+If all votes the same, earlier voter’s reputation gain greater than later voter’s
+''
+
+This again needs some new notation. 
+
+The {\em reputation gain of $j$ given $(i, c, v)$} is defined as:
+\begin{center}
+ $ \Delta_{i, c, v}(h, {\bf r})_j = r_j -  F_{i, c, v}(h, {\bf r})_j$
+\end{center}
+
+
+
+\subsection{some name}
+
+``
 In the case of equal votes two evaluators with the same reputation evaluating consecutively with the same value, the first should be better off than the second.
-Reputation should be transferred to an early evaluator in the case that a later evaluator voted the same as her.
+''
+
+\begin{center}
+$\Delta_{i, c, v}(h, {\bf r})_i \ge \Delta_{j, c, v}(h\cdot(i,c,v), F_{i,c,v}(h, {\bf r}))_j$
+\end{center}
+
+\subsection{Reward consensus voters}
+
+This is the main Backfeed Condition:
+``
+Reputation should be awarded to an early evaluator in the case that a later evaluator voted the same as her.
+''
+\begin{center}
+if $(j, c, v)$ is an evaluation in $h$, then:
+$\Delta_{i, c, v}(h, {\bf r})_j > 0$
+\end{center}
+
+\subsection{..}
+
+
 Those who vote should earn in confront of those who do not vote
+
 Requires that evaluations will trigger a reputation payment from non-voters to already voted.
+
 It should be possible for any evaluator to regain at least the reputation put at stake upon evaluating.
+
 (optional) Reputation potential gain should be proportional to reputation put at stake
 Requires the stake to be a decreasing function of the engaged reputation.
 Evaluation load should be reasonable - the system can’t get stuck because contributions don’t reach consensus.
 
+\subsection{Results}
+
+
+{\bf lemma:}
 Commutativity: if I first vote for contribution A and then for B should have the same effect as first voting for B and then for A.
+
+(This follows from ``contribution independence'')
+
+
+{\bf lemma:}
 Commutativity (2): Actions on different contributions should be commutative also on different agents: if X evaluates A and then Y evaluations B, this should have the same effect as first voting Y B and then X A.
 
+(This follows from ``contribution independence'')
 
 \section{The Backfeed Protocol}
 
