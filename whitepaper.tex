@@ -1,0 +1,137 @@
+\documentclass{article}
+\usepackage{amsmath}
+\setlength{\parskip}{.5em}
+\begin{document}
+\title{Backfeed Protocol - The Objective Layer}
+\author{..}
+\date{}
+\maketitle
+
+\section{Introduction}
+
+This paper is the first in a series of chapters describing the several layers of the Backfeed protocol. 
+
+It describes the {\em object layer} of the Backfeed Protocol. It describes a `minimal layer` of requirements. All other Backfeed Protocols are extensions of the basic protocol.
+
+The paper will first sketch the general context of reputation flow in the system. 
+We will then formulate a number of precise requirements that describe how reputation should flow in a system. Finally, we define function that satisfies these requirements. 
+A reference implementation of the Backfeed Protocol can be found on http://hahahlol/
+
+\section{Problem Statement}
+
+We consider a system where there is an organization of a group of agents that have {\em reputation} that represents their influence in the system, and {\em tokens} that represent the property of the organization.
+
+These agents can either {\em make a contribution} to the organization, or {\em evaluate a previous contribution} to help determine the value (in tokens) of that contribution. 
+
+
+[We leave out tokens for now, just focus on rep]
+
+More formally, we consider a system where there is a group of agents, which we will just represent by the numbers $N = \{1, ... , n\}$ and a reputation distribution ${\bf r} = \{r_1, ... r_n\}$, where each $r_i$ is a real number.
+ 
+Each agent can do an action: it can either contribute a contribution $c$, which we will represent as the action $(i, c)$, or agent $i$ can make an evaluation $e$ of a contribution $c$, proposing value $v$ out a predefined set of numeric values (written as $(i,c,v)$ or as $e_{i,c,v}$).
+
+
+[We leave out the contribution actions for now, and just focus on the reputation flow as the result of actions]
+
+
+An evaluation action will typically involve a redistribution of the reputation in the system, where the redistribution depends on the current reputation distribution ${\bf r}$ as well as on the history $h = e_0 .. e_m$  of the previous evaluations made by the other users.\footnote{jelle: so I am leaving out reputation distributions of the previous states, to keep stuff manageable. This in realiyt represents a ``hidden assumption'', namely that our evaluation functions are, to use Elad's terms, ``dynamic'' instead of ``static''. It's my {\em ansatz}, if you will, and to my logician's mind it is a methodological mistake :-)}
+
+More formally, each action $(i, c, v)$ gives rise to a state transition
+
+\begin{center}
+{ $h, {\bf r} \xrightarrow{i,c,v} {\bf r'}$ }
+\end{center}
+Or, if you prefer,  a function that takes a history and a reputation distribution as an argument, and returns a new reputation distribution:
+\begin{center}
+$F_{i,c,v}(h, {\bf r}) == {\bf r'}$
+\end{center}
+With its arguments ``unwrapped'', this function looks like this:
+\begin{center}
+$F_{i,c,v}((e_1, .. , e_m), \{r_1, .. r,_n\})$
+\end{center}
+Or:
+\begin{center}
+$F_{i,c,v}(((i_1,c_1,v_1), .. , (i_m, c_m, v_m)), \{r_1, .. r,_n\})$
+\end{center}
+We will use these notations interchangeably in the following, depending on what is most convenient.
+
+Our task is to find a definition for this function that satisfies a number of requirements, that we will define in the next section.
+
+
+\section{Conditions on Reputation Flow}
+
+\footnote{Time locality (the Markov Property). jelle: I don't really understand this terminology. ``Time local'' just because I am ignorant. However, the Markov Property I think i understand, and if our transition system is considered as a Markov model, then the Markov property would mean: next reputation distribution only depends on current distribution {\em and nothing else}. This is clearly not desirable. So you are welcome to use these terms, but I am leaving them out for now :-). I think I do capture the spririt of the google doc in the first few requirements - time indepdence, contribution independence} 
+
+\subsection{time independence}
+
+{\bf time independence:} Reputation flow of the i’th voter doesn’t rely on when he voted. Or, generelized, the {\em order} of the previous evaluations does not matter for calculating the new 
+
+\begin{center}
+$F_{i,c,v}((e_1, ..., e_i, e_k, .. , e_m), {\bf r}) = F_{i,c,v}((e_1, ...., e_k, e_i, ... , e_m), {\bf r})$
+ 
+
+\end{center}
+
+\subsection{contribution independence}
+
+The reputation flow of resulting from the evaluation of a contribution $c$ should be independent of any previous evaluation of contributions other than $c$.
+
+For any history $h$ , if $h | c$ is just like $h$, but with all evaluations of contributions not equal to c removes. Then we have
+
+\begin{center}
+$F_{i,c,v}(h, {\bf r}) = F_{i,c,v}(h|c, {\bf r}) $
+\end{center}
+
+\subsection{linearity}
+
+The  reputation flow only depends on voters reputation linearly with their reputation (both the evaluator and the guy of which reputation is changing);
+
+I am not sure what the motivation for this is (other than simplicity, which is fine, but a different kind of requirement). 
+
+If $\delta_i$ is the difference between $i$'s reputation in ${\bf r}$ and $F_{i,c,v}(h, {\bf r})$, then we have that:
+\begin{center}
+$\delta_i = ??$ (I am not even really sure if I understand the requirement in general)
+\end{center}
+
+\subsection{split insensivity}
+
+Split insensitivy means that it does not, everything else remaining equal, it should not matter that the effect on the system of two voters voting as a block (that is, always subequently and with corresponding votes), the effect on their combined reputation is the same as the effect on the information of a single agent that has the same reputation as the two combined.
+
+Formally, let $k$ be an agent in $N$ , $N[k/{i,j}]$ be like N, but with $k$ removed and two new agents $i$ and $j$ added.
+
+Similarly, let ${\bf r}[k/{i,j}]$ be a reputation distribution on $N[k/{i,j}]$, and let $h[k/{i,j}]$ be just like the history $h$, but with each evaluation $(k, c, v)$ substituted with $(i, c, v) (j, c, v)$.
+
+Now, given all this preliminary notation, split insensitivity can be formulated is several ways:
+
+{\bf strong split insensititivy}: the reputation flow after an evaluation is indipendent of splitting:
+\begin{center}
+if $r_k = r[k/{i,j}]_i +r[k/{i,j}]_i$, then $F(h, {\bf r}) = F(h[k/{i,j}], {\bf r}[k/{i,j}])$
+\end{center}
+
+
+{\bf weak split insensititivy}: the reputation flow after an evaluation is indipendent of splitting:
+\begin{center}
+if $r_k = r[k/{i,j}]_i +r[k/{i,j}]_i$, then $F(h, {\bf r})_k = F(h[k/{i,j}], {\bf r}[k/{i,j}])_i + F(h[k/{i,j}], {\bf r}[k/{i,j}])_j$
+\end{center}
+
+\subsection{x}
+If all votes the same, earlier voter’s reputation gain > (or >=) to later voter’s
+In the case of equal votes two evaluators with the same reputation evaluating consecutively with the same value, the first should be better off than the second.
+Reputation should be transferred to an early evaluator in the case that a later evaluator voted the same as her.
+Those who vote should earn in confront of those who do not vote
+Requires that evaluations will trigger a reputation payment from non-voters to already voted.
+It should be possible for any evaluator to regain at least the reputation put at stake upon evaluating.
+(optional) Reputation potential gain should be proportional to reputation put at stake
+Requires the stake to be a decreasing function of the engaged reputation.
+Evaluation load should be reasonable - the system can’t get stuck because contributions don’t reach consensus.
+
+Commutativity: if I first vote for contribution A and then for B should have the same effect as first voting for B and then for A.
+Commutativity (2): Actions on different contributions should be commutative also on different agents: if X evaluates A and then Y evaluations B, this should have the same effect as first voting Y B and then X A.
+
+
+\section{The Backfeed Protocol}
+
+\section{Appendix: maths, proofs, difficult stuff}
+
+
+\end{document}
