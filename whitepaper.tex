@@ -1,11 +1,14 @@
 \documentclass{article}
 \usepackage{amsmath}
 \setlength{\parskip}{.5em}
+% \setlength{\parindent}{0pt}
 \begin{document}
 \title{Backfeed Protocol - The Objective Layer}
 \author{..}
 \date{}
 \maketitle
+
+\tableofcontents
 
 \section{Introduction}
 
@@ -33,8 +36,7 @@ Each agent can do an action: it can either contribute a contribution $c$, which 
 
 [We leave out the contribution actions for now, and just focus on the reputation flow as the result of actions]
 
-
-An evaluation action will typically involve a redistribution of the reputation in the system, where the redistribution depends on the current reputation distribution ${\bf r}$ as well as on the history $h = e_0 .. e_m$  of the previous evaluations made by the other users.\footnote{jelle: so I am leaving out reputation distributions of the previous states, to keep stuff manageable. This in realiyt represents a ``hidden assumption'', namely that our evaluation functions are, to use Elad's terms, ``dynamic'' instead of ``static''. It's my {\em ansatz}, if you will, and to my logician's mind it is a methodological mistake :-)}
+An evaluation action will typically involve a redistribution of the reputation in the system, where the redistribution depends on the current reputation distribution ${\bf r}$ as well as on the history $h = e_0 .. e_m$  of the previous evaluations made by the other users.\footnote{jelle: so I am leaving out reputation distributions of the previous states, to keep stuff manageable. This in realiyt represents a ``hidden assumption'', namely that our evaluation functions are, to use Elad's terms, ``dynamic'' instead of ``static''. It's my {\em ansatz}. )}
 
 More formally, each action $(i, c, v)$ gives rise to a state transition
 
@@ -45,36 +47,59 @@ Or, if you prefer,  a function that takes a history and a reputation distributio
 \begin{center}
 $F_{i,c,v}(h, {\bf r}) == {\bf r'}$
 \end{center}
-With its arguments ``unwrapped'', this function looks like this:
+
+Just to be clear on the notation we will use, we will switch between different notations in this paper. With its arguments ``unwrapped'', this function looks like this:
 \begin{center}
 $F_{i,c,v}((e_1, .. , e_m), \{r_1, .. r,_n\})$
 \end{center}
-Or:
+And sometimes we will also write:
 \begin{center}
 $F_{i,c,v}(((i_1,c_1,v_1), .. , (i_m, c_m, v_m)), \{r_1, .. r,_n\})$
 \end{center}
 We will use these notations interchangeably in the following, depending on what is most convenient.
 
-Our task is to find a definition for this function that satisfies a number of requirements, that we will define in the next section.
+Finally, we introduce the following abbreviation to express the amount of repution gain of a user in the system: the {\em reputation gain of $j$ given $(i, c, v)$} is defined as:
+\begin{center}
+ $ \Delta_{i, c, v}(h, {\bf r})_j =  F_{i, c, v}(h, {\bf r})_j - r_j$
+\end{center}
 
+\section{Reputation Flow}
 
-\section{Conditions on Reputation Flow}
+In this section, we will propose a number of requirements for the functino $F_{i, c, v}$ that make sense.-
+
+\subsection{Reward consensus voters}
+
+The main Backfeed Condition is:
+``Reputation should be awarded to an early evaluator in the case that a later evaluator voted the same as her.''
+\begin{center}
+if $(j, c, v)$ is an evaluation in $h$, and $i \neq j$ then:
+$\Delta_{i, c, v}(h, {\bf r})_j > 0$
+\end{center}
+Or, more generally, for a metric of similarity that we will define later:
+\begin{center}
+if $(j, c, v')$ is an evaluation in $h$, and $v$ is similar to $v'$ then:
+$\Delta_{i, c, v}(h, {\bf r})_j > 0$
+\end{center}
+Moreover, previous voters should be rewarded in proportion to their reputation - the more reputation you have, the more reputation you gain:
+\begin{center}
+if $(j, c, v)$  and $(k, c, v)$ are evaluations in $h$, and $r_j >r_k$ then:
+$\Delta_{i, c, v}(h, {\bf r})_j > \Delta_{i,c,v}(h, {\bf r})_k$
+\end{center}
+Hypothesis: This follows from the previous condition together with split resilience and time independence.
+
 
 \subsection{Time Independence}
 
-{\bf time independence:} Reputation flow of the i’th voter doesn’t rely on when he voted. Or, generalized, the {\em order} of the previous evaluations does not matter for calculating the new 
-
+{\bf time independence:} Reputation flow of the $i$’th voter doesn’t rely on when he voted. Or, generalized, the {\em order} of the previous evaluations does not matter for calculating the repution gain of the present user.
 \begin{center}
 $F_{i,c,v}((e_1, ..., e_i, e_k, .. , e_m), {\bf r}) = F_{i,c,v}((e_1, ...., e_k, e_i, ... , e_m), {\bf r})$
- 
-
 \end{center}
 
 \subsection{Contribution Independence}
 
 The reputation flow of resulting from the evaluation of a contribution $c$ should be independent of any previous evaluation of contributions other than $c$.
 
-For any history $h$, define $h | c$ to be just like $h$, but with all evaluations of contributions not equal to c removed. Contribution Indipendence then can be formulated as:
+For any history $h$, define $h | c$ to be just like $h$, but with all evaluations of contributions not equal to c removed. Contribution Independence then can be formulated as:
 
 \begin{center}
 $F_{i,c,v}(h, {\bf r}) = F_{i,c,v}(h|c, {\bf r}) $
@@ -82,7 +107,7 @@ $F_{i,c,v}(h, {\bf r}) = F_{i,c,v}(h|c, {\bf r}) $
 
 \subsection{Split Insensivity}
 
-Split insensitivy means that it does not, everything else remaining equal, it should not matter that the effect on the system of two voters voting as a block (that is, always subequently and with corresponding votes), the effect on their combined reputation is the same as the effect on the information of a single agent that has the same reputation as the two combined.
+Split insensitivy means that, everything else remaining equal, it should not matter that the effect on the system of two voters voting as a block (that is, always subequently and with corresponding votes), the effect on their combined reputation is the same as the effect on the information of a single agent that has the same reputation as the two combined.
 
 Formally, let $k$ be an agent in $N$ , $N[k/{i,j}]$ be like N, but with $k$ removed and two new agents $i$ and $j$ added.
 
@@ -90,7 +115,7 @@ Similarly, let ${\bf r}[k/{i,j}]$ be a reputation distribution on $N[k/{i,j}]$, 
 
 Now, given all this preliminary notation, split insensitivity can be formulated is several ways:
 
-{\bf strong split insensititivy}: the reputation flow after an evaluation is indipendent of splitting:
+{\bf strong split insensititivy}: the reputation flow after an evaluation is independent of splitting:
 \begin{center}
 if $r_k = r[k/{l,m}]_i +r[k/{l,m}]_i$, then $F(h, {\bf r})[k/{l, m}] = F(h[k/{i,j}], {\bf r}[k/{l,m}])$
 \end{center}
@@ -100,74 +125,109 @@ if $r_k = r[k/{l,m}]_i +r[k/{l,m}]_i$, then $F(h, {\bf r})[k/{l, m}] = F(h[k/{i,
 \begin{center}
 if $r_k = r[k/{i,j}]_i +r[k/{i,j}]_i$, then $F(h, {\bf r})_k = F(h[k/{i,j}], {\bf r}[k/{i,j}])_i + F(h[k/{i,j}], {\bf r}[k/{i,j}])_j$
 \end{center}
+Split sensitivity is a strong protection agains sybil attacks: it says that the fact that the influence an attacker has on the logic depends only on the amount of reputation he controls, but is independent of the number of agents he controls.
 
+Another type of Sybil attack is to create a large number of new users. As new users enter with 0 reputation, we need to make sure that these new users do not gain reputation by voting only (which is cheap): 
+\begin{center}
+If $r_i =0$, then $\Delta_e(h, {\bf r})_i = 0$
+\end{center}
 
 \subsection{The earlier the better}
 
-``
-If all votes the same, earlier voter’s reputation gain greater than later voter’s
-''
 
-This again needs some new notation. 
-
-The {\em reputation gain of $j$ given $(i, c, v)$} is defined as:
-\begin{center}
- $ \Delta_{i, c, v}(h, {\bf r})_j = r_j -  F_{i, c, v}(h, {\bf r})_j$
-\end{center}
-
-
-
-\subsection{some name}
-
-``
 In the case of equal votes two evaluators with the same reputation evaluating consecutively with the same value, the first should be better off than the second.
-''
 
 \begin{center}
 $\Delta_{i, c, v}(h, {\bf r})_i \ge \Delta_{j, c, v}(h\cdot(i,c,v), F_{i,c,v}(h, {\bf r}))_j$
 \end{center}
+From this it follows that if all votes for a contribution are the same, earlier voter’s reputation gain greater than later voter’s
+\subsection{Punish Non-active Voters}
 
-\subsection{Reward consensus voters}
+Those who vote should earn in confront of those who do not vote.
 
-This is the main Backfeed Condition:
-``
-Reputation should be awarded to an early evaluator in the case that a later evaluator voted the same as her.
-''
+So lets generalize our notation: if $h$ is a history, then $F_n$ is the composition of $F_e$ for each $e$ in $h$. 
+
+More precisely, if $h$ is the history $(e_0, ..., e_n)$, then $F_h(h', {\bf r})$ is equal to $F_{e_0}(F_{e_1}(... F_{e_n}(h', {\bf r})))$
+
+
 \begin{center}
-if $(j, c, v)$ is an evaluation in $h$, then:
-$\Delta_{i, c, v}(h, {\bf r})_j > 0$
+If $h$ is a history that contains $(i, c, v)$, and $j$ has not voted in $h$, then $F_h(h', {\bf r})_i - {\bf r}_i > F_h(h', {\bf r})_j - {\bf r}_j$
 \end{center}
 
-\subsection{..}
+Hypothesis: This requires that evaluations will trigger a reputation payment from non-voters to already voted.
 
+NOTE: Regarding the notion of stake: this means that if we choose to have voters pay a reputation fee for voting, then non-voters should pay a fee that is even higher. 
+It follows that he will automatically be rewarded (in ``relative reputation'') - having the first voter pay a fee violates the principle of punishing inactive voters.
 
-Those who vote should earn in confront of those who do not vote
-
-Requires that evaluations will trigger a reputation payment from non-voters to already voted.
-
+\subsection{Regain your stake}
 It should be possible for any evaluator to regain at least the reputation put at stake upon evaluating.
 
+What we mean is that if we have a system where users pay a penalty for voting, then it should always be possibile to regain that penalty. 
+\begin{center}
+For each history $(h, {\bf r}$, there is a history $(h', {\bf r})$ that extends $h$, such that $F(h,r)_i < $ 
+\end{center}
+
+
+\subsection{Proportional reputation gain}
 (optional) Reputation potential gain should be proportional to reputation put at stake
 Requires the stake to be a decreasing function of the engaged reputation.
+
 Evaluation load should be reasonable - the system can’t get stuck because contributions don’t reach consensus.
 
-\subsection{Results}
+\subsection{Time Independence of votes for different contributions}
 
 
-{\bf lemma:}
 Commutativity: if I first vote for contribution A and then for B should have the same effect as first voting for B and then for A.
 
 (This follows from ``contribution independence'')
 
+\subsection{Time Independence of unrelated votes}
 
-{\bf lemma:}
+
 Commutativity (2): Actions on different contributions should be commutative also on different agents: if X evaluates A and then Y evaluations B, this should have the same effect as first voting Y B and then X A.
 
 (This follows from ``contribution independence'')
 
+\section{It should be possible to loose the majority}
+
+One potential attack on a protocol that rewards consensual users is that voters that ``the rich gets richer''. 
+If there are more than 2 active users
+\section{Judgement Aggregation}
+
+We don't need this for the Curators Use Case.
+
+\section{Risks}
+
+\subsection{Lying}
+
+\subsection{Rich gets richer}
+
+One problem with protocols that reward consensus is that ``the right gets richer'': if there is a large enough group of people that are aligned, reputation will continue to flow towards them until they have a majority. In particular, it is undesirable that if there is a $51\%$ block of aligned voters (that always vote together), all repution will flow towards them untial they reach $100\%$. This is undesirable because it means that the  
+
 \section{The Backfeed Protocol}
 
+
+Hypothesis:
+
+Let {\em the vote of $i$ in $h$}, $V(h, i)$, the the value of the last vote in $h$.
+\begin{enumerate}
+\item $F_(i,c,v)(h,r)(i) = r(i)$
+\item if $i \neq j$  and $V(h, j) = v$ , then $F_(i,c,v)(h,r)(j)= r(j) \cdot \delta_{reward}$
+\item if $i \neq j$  and $V(h, j) \neq v$ , then $F_(i,c,v)(h,r)(j)= r(j) \cdot \delta_{penalty}$
+\end{enumerate}
 \section{Appendix: maths, proofs, difficult stuff}
 
+\section{References}
+
+\section{The Protocol Applied to Curating the Whitelist of the DAO}
+
+{\em (notes that should go to the other whitepaper) }
+\begin{itemize}
+\item Punishing inactive voters is actually a very nice thing: it means that curators that just do not feel like working can simply stop evaluating, and gradually transfer their control to the other voters, on the basis of the consensus within that group.
+\end{itemize}
+
+\begin{enumerate}
+\item https://www.oasis-open.org/committees/download.php/28303/JIB2007-DSS-Survey.pdf
+\end{enumerate}
 
 \end{document}
