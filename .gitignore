@@ -1,7 +1,7 @@
-whitepaper.aux
-whitepaper.dvi
-whitepaper.fls
-whitepaper.pdf
-whitepaper.log
-whitepaper.fdb_latexmk
-whitepaper.toc
+*.aux
+*.dvi
+*.fls
+*.log
+*.fdb_latexmk
+*.toc
+
