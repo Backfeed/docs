@@ -1,0 +1,300 @@
+\documentclass{article}
+\usepackage{amsmath}
+\setlength{\parskip}{.5em}
+% \setlength{\parindent}{0pt}
+\begin{document}
+\newcommand{\flow}{\Phi}
+\newenvironment{condition}[1]
+	{
+	\begin{center}
+	   \begin{tabular}{|p{0.9\textwidth}|}
+		\hline\\
+		{\bf #1:}\\
+	}
+	{
+		\\ \\\hline
+	\end{tabular}
+	\end{center}
+	}
+    
+\title{Backfeed Protocol - The Objective Layer}
+\author{Matan Field, Jelle Gerbrandy, Elad Shtilerman, Primavera de Filippi}
+\date{}
+\maketitle
+
+\tableofcontents
+
+\section{Introduction}
+
+This paper is the first in a series of chapters describing the several layers of the Backfeed protocol. 
+
+It describes the {\em object layer} of the Backfeed Protocol. It describes a `minimal layer` of requirements. All other Backfeed Protocols are extensions of the basic protocol.
+
+The paper will first sketch the general context of reputation flow in the system. 
+We will then formulate a number of precise requirements that describe how reputation should flow in a system. Finally, we define function that satisfies these requirements. 
+A reference implementation of the Backfeed Protocol can be found on http://hahahlol/
+
+\section{Problem Statement}
+
+The Backfeed Objective Protocol describes a system that consists of an organization of agents that have {\em reputation} that represents their influence in the system, and {\em tokens} that represent the property of the organization.
+
+These agents can either {\em make a contribution} to the organization, or {\em evaluate a previous contribution} to help determine the value (in tokens) of that contribution. These actions have effects on the distribution of reputation and tokens in the system - for example, when a contribution gets accepted on the basis of the evaluations of the agents, the contributor may be assigned tokens and reputation on the basis of the value of her contribution.
+
+In this paper, we only focus on the flow of {\em reputation}  - we will leave the discussion of the assignment of tokens out of the equation. 
+
+
+We will represent our system as a labeled directed graph where the states are labeled by repution distributions over the agents, and the vertices are labeled with actions - either evaluations or contributions.
+
+More specifically, let $N=\{1, ..., n\}$ be a set of agents. 
+A {\em reputation distribution} is a function $r: N \mapsto [0,1]$ that assigns a real number $r(i)$ such that $0 \leq r(i) \leq 1$ and $\Sigma_{i \in N} r(n) = 1$. 
+
+An {\em evaluation} is an action in which an agent $k$ evaluates a contribution $c$ as having value $v$.
+So, given a set of agents $N$, a set of contributions $C$ and a set of possible values $V$, a contribution is an element $(k,c,v) \in N \times C \times V$.
+To keep the analysis manageable, in this paper we almost exclusively focus on the case where $V= \{0, 1\}$ - i.e.\ that evaluators give a simple yes/no evaluation.
+
+
+A central part of the Backfeed Objective Protocol is that an evaluation action will typically involve a redistribution of the reputation in the system. Starting from an initial reputation vector as ``seed'', each evaluation will change the relative reputation of the agents involved. 
+
+\begin{center}
+$r_0 \xrightarrow{i_1, c_1, v_1} r_1 \xrightarrow{i_2, c_2, v_2} r_2 ... r_{n-1} \xrightarrow{i_n, c_n, v_n} r_n$
+\end{center}
+
+More formally, let a {\em history} be a sequence of $h = e_0 e_1...  e_n$, where each $e_i$ is an action.
+
+We are interested in defining how reputation flows in a system as the result of a sequence of evaluations, and to do that we define a family of functions $\flow$ that map a seed distribution $r_0$ and a history of events $h$ to a new reputation function $\flow(r, h)$. 
+% \begin{center}
+% $h \xrightarrow{k,c,v} r'$
+% \end{center}
+% But we will mostly use the following notation:
+% \begin{center}
+% tween different notations in this paper. With its arguments ``unwrapped'', this function looks like this:
+% \begin{center}
+% $F_{i,c,v}((e_1, .. , e_m), \{r_1, .. r,_n\})$
+% \end{center}
+% And sometimes we will also write:
+% \begin{center}
+% $F_{i,c,v}(((i_1,c_1,v_1), .. , (i_m, c_m, v_m)), \{r_1, .. r,_n\})$
+% \end{center}
+% We will use these notations interchangeably in the following, depending on what is most convenient.
+
+We introduce some notation conventions and abbreviatons to make formulating our conditions easier.
+
+With regard to histories, we will not be obsessively precise, and write things like $hh'$ for the concatenation of $h$ with $h'$; or $he$ or $h(k,c,v)$ for the history $h$ appended with $e$ and $(k,c,v)$, respectively. 
+
+% , and $hr$ for a history that `ends' with the reputation vector $r$.
+We define:
+\begin{center}
+$\flow_{h'}(r, h) := \flow(r, hh')$
+\end{center}
+We define the {\em reputation gain of $i$ from $h'$ in $(r_0, h)$} as:
+\begin{center}
+ $ \Delta_{h'}(r, h)(i) :=  \flow_{h'}(r, h)(i)- \flow(r, h)(i)$
+\end{center}
+% When $h'$ consists of just a single evaluation, i.e.\ when $h = (k,c,v)$, we will write:
+% \begin{center}
+%  $ \Delta_{k, c, v}(r_0, h)(i) :=  F(r_0, h \dot (k,c,v))(i)- F(r_0, h)(i)$
+% \end{center}
+
+\section{Reputation Flow}
+
+We will now formulate - in a formally rigourous way - a number condition on reputation flow.
+
+
+\subsection{Reward consensus voters}
+
+Reputation should flow to an early evaluator in the case that a later evaluator voted the same as her.
+\begin{condition}{reward consensus voters}
+if $(i, c, v)$ is an evaluation in $h$, and $i \neq k$ then $\Delta_{k, c, v}(r, h)(i) > 0$
+\end{condition}
+% Or, more generally, for a metric of similarity that we will define later:
+% \begin{center}
+% if $(j, c, v')$ is an evaluation in $h$, and $v$ is similar to $v'$ then:
+% $\Delta_{i, c, v}(h, {\bf r})_j > 0$
+% \end{center}
+
+\subsection{Reward consensus voters proportionally}
+Previous voters should be rewarded in proportion to their reputation - the more reputation you have, the more reputation you gain:\footnote{We need to choose here if we want to consider the static or the dynamic framework. Present def is for static.}
+\begin{condition}{reward proportionally}
+If $(i, c, v)$  and $(j, c, v)$ are evaluations in $h$ and $\flow(r, h)(i) >\flow(r', h)(j)$, then
+$\Delta_{k, c, v}(r, h)(i) > \Delta_{k,c,v}(r', h)(j)$
+\end{condition}
+Hypothesis: This follows from the previous condition together with split resilience and time independence.
+
+
+\subsection{Time Independence}
+
+Reputation flow of the $i$’th voter doesn’t rely on when he voted. Or, generalized, the {\em order} of the previous evaluations does not matter for calculating the repution gain:
+\begin{condition}{time independence}
+If $h$ and $h'$ are permutations of each other, and $\flow(r, h) = \flow(r', h')$, then $\flow_{h''}(r, h) = \flow_{h''}(r, h)$
+\end{condition}
+
+\subsection{Contribution Independence}
+
+The reputation flow of resulting from the evaluation of a contribution $c$ should be independent of any previous evaluation of contributions other than $c$.
+
+\begin{condition}{contribution independence}
+If $h$ and $h'$ are such that 
+$(i, c, v)  \in h$ iff  $(i, c, v) \in h'$, and $\flow(r, h) = \flow(r', h')$ then
+$\flow_{k,c,v}(r, h) = \flow_{k,c,v}(r', h')$
+\end{condition}
+
+\subsection{Static (versus dynamic) calculations}
+
+We say that a protocol $\flow$ is {\em dynamic} if the reputation flow only depends on the current reputation distribution.
+
+\begin{condition}{dynamic flow}
+A protocol $\flow$ is {\em dynamic} iff for each $r$ and $r'$, if $\Phi(r, h) = \Phi(r', h)$, then $\Phi_{e}(r, h) = \Phi_{e}(r', h)$
+\end{condition}
+
+\subsection{Split Insensivity}
+
+We envisage the system to be used in environments where users cannot be identified.
+Reputation flow is potentially vulnerable to a {\em Sybil attack} in which agents try to ``game the system'' by creating many agents. This is something we want to protect against. 
+
+Split insensitivy means that, everything else remaining equal, it should not matter that the effect on the system of two voters voting as a block (that is, always subequently and with corresponding votes), the effect on their combined reputation is the same as the effect on the information of a single agent that has the same reputation as the two combined.
+
+
+To express split insensitivy, we need some notation. Let $(r, h)$ be a history for $N$, and $i$ and agent in $N$. We say that $i$ has split into $i_1$ and $i_2$ in $(r', h')$  iff $(r', h')$ is a history over $N / {i} \cup \{i_1, i_2\}$, $r'$ is just like $r$, with $r(i) = r(i_1) + r(i_2)$, and $h'$ is like $h$, but with each $(i, c, v)$ replaced with $(i_1, c, v) \cdot (i_2, c, v)$. 
+
+If this is the case, we write $(r, h) \sim_{i/\{i_1, i_2\}} (r', h')$
+
+\begin{condition}{strong split insensititivy} 
+if $(r, h) \sim_{i/\{i_1, i_2\}} (r', h')$ then $\Delta(r, h)(i) = \Delta(r', h')(i_1) + \Delta(r'_0, h')(i_2)$
+\end{condition}
+
+
+\begin{condition}{split resilience
+\footnote{jelle: not sure I got the term right} 
+}
+if $(r, h) \sim_{i/\{i_1, i_2\}} (r', h')$, then $\Delta(r, h)(i) \leq \Delta(r', h')(i_1) + \Delta(r'_0, h')(i_2)$
+\end{condition}
+
+
+
+%
+
+% {\bf weak split insensititivy}: the reputation flow after an evaluation is independent of splitting:
+% \begin{center}
+% if $r_k = r[k/{i,j}]_i +r[k/{i,j}]_i$, then $F(h, {\bf r})_k = F(h[k/{i,j}], {\bf r}[k/{i,j}])_i + F(h[k/{i,j}], {\bf r}[k/{i,j}])_j$
+% \end{center}
+Split sensitivity is a strong protection against Sybil attacks: it says that the fact that the influence an attacker has on the reputation flow depends only on the amount of reputation he controls, but is independent of the number of agents he controls.
+
+% Another type of Sybil attack is to create a large number of new users. As new users enter with 0 reputation, we need to make sure that these new users do not gain reputation by voting only (which is cheap): 
+% \begin{center}
+% If $r_i =0$, then $\Delta_e(h, {\bf r})_i = 0$
+% \end{center}
+
+\subsection{The earlier the better}
+
+
+In the case of equal votes two evaluators with the same reputation evaluating consecutively with the same value, the first should be better of - or at least not worse off -than the second. This is an incentive for evaluating early.
+\begin{condition}{Do not punish early voters}
+if $\flow(r, h)(k) = \flow(r, h)(l)$ then $\flow_{(k, c, v)(l,c,v)}(r, h)(k) \geq  \flow_{(k, c, v)(l, c, v)}(r, h)(l)$
+\end{condition}
+
+\subsection{Punish Non-active Voters}
+
+Those who vote should earn in confront of those who do not vote.
+\begin{condition}{punish inactivity}
+If $h$ is a history in which $i$ has voted, but $j$ has not, then
+$\Delta(r, h)(i) \geq \Delta(r, h)(j)$
+\end{condition}
+\footnote{jelle: I did not find a more generic formulation}
+
+
+\subsection{Regain your stake}
+It should be possible for any evaluator to regain at least the reputation put at stake upon evaluating.
+
+What we mean is that if we have a system where users pay a penalty for voting, then it should always be possible to regain that penalty. 
+\begin{condition}{regain your stake}
+For each history $h$, if $\Delta_{(k, c, v)}(r, h)(k) < 0$, then there is a history $h'$ such that $\Delta_{(k,c,v)h'}(r, h)(k) \geq 0$ 
+\end{condition}
+
+
+\subsection{Proportional reputation gain}
+Reputation potential gain should be proportional to reputation put at stake.
+
+\begin{condition}{reputation gain is relative}
+if $\flow(h,r)(i) > \flow(h, r)(j)$, and $i$ and $j$ have voted equally on contribution $c$, and $k \neq i$ and $k \neq j$ then:
+$\Delta_{k,c,v}(h, r)(i) > \Delta_{k,c,v}(h, r)(j)$
+\end{condition}
+
+\subsection{Time Independence of votes for different contributions}
+
+
+Commutativity: if I first vote for contribution A and then for B should have the same effect as first voting for B and then for A.
+(This follows from ``contribution independence'')
+
+\subsection{Time Independence of unrelated votes}
+
+
+Commutativity (2): Actions on different contributions should be commutative also on different agents: 
+if X evaluates A and then Y evaluations B, this should have the same effect as first voting Y B and then X A.
+(This follows from ``contribution independence'')
+
+\subsection{Speed of flow}
+
+[try to express something about how quickly reputation flows in the system - I mean that it would be cool to have a parameter that sets it. Concepts like ``stability'', ``viscosity'' may be useful]
+
+\subsection{Resilience}
+
+[jelle: this section is very tentative, not sure we want to go this way in this text]
+
+The concept of ``resilience'' of a protocol function $\flow$ pertains to the possibility of ``gaming'' the system, of the possibility of malign agents to gain reputation no matter what.
+
+Resilience depends very much on the object of evaluation. For example, if the object is something that has a high probability of being uncontroversial - say our agents need to decide on a stock price at a certain time - then it is expected that fast voters will get more reputation - and in that case, a ``winning strategy'' may just be to vote as quick as possible. We do not see that as a problem {\em per se}.
+If, instead, a topic is controversial, and it is hard to predict who will win, it should be difficult or impossible to find a winning strategy. 
+
+In general, we can say that a protocol is resilient in case that if all voters vote randomly, then for each strategy $s$ for $i$, the probability of reputation gain is exactly $50\%$.
+
+To define this precisely, we need a somewhat artificial concept. We have not talked about who decides which agents votes first: we introducte ``nature'' as a player for that.
+
+The {\em reputation game defined by $\flow$ and $r_0$} is a rooted labeled tree. On each even node, nature chooses an agent $i$. In the next node, which we call an $i$-node, $i$ either chooses to evaluate a contribution, or passes her turn (i.e.\ she chooses not to act at all). 
+If we label the edges with the chosen evaluation, we can label each even node with the value of $\flow$.\footnote{We can make it much more precise, of course.}
+
+Now we can define {\em a strategy for $i$ in the game given by $r_0$ and $\flow$} is a function $S$ that assigns to each $i$-node $s$ an action $S(s)$.
+
+We can now define the resilience of $\Phi$ like this. 
+
+\begin{condition}{weak resilience} 
+there is no winning strategy for games of arbitrary length: For each $r_0$ and each history $h$ compatible with $S$, there is an $h'$ such that $hh'$ is compatible with $S$, and $\Delta(r, hh')(i) \leq 0$.
+\end{condition}
+\begin{condition}{somewhat less weak resilience} 
+Let $H$ be the set of histories compatible with a strategy $S$ for $i$. Then $\Sigma_{h\in H} \Delta(r, h)(i) \leq 0$
+\end{condition}
+A full game theoretic analysis lies beyond the scope of this paper. However, there are many things we would like to investigate. For example, we can consider preferences of the players, that depend on either reputation or on the actual value conferred on the given contribution, in different degrees. An honest player would then prefer the correct outcome over reputation gain (or, in any case, all else being equal, prefer the correct answer over an incorrect one), indifferent players that care for neither and vote randomly or not at all, and attackers that care about reputation only. 
+
+\section{Judgement Aggregation}
+We don't need this for the Curators Use Case.
+
+\section{Risks}
+
+\subsection{Lying}
+
+[the ebay attack: play nicely along with the consensus until you have lots of rep - then use it to abuse the system]
+
+\subsection{Rich get richer}
+
+One problem with protocols that reward consensus is that ``the right gets richer'': if there is a large enough group of people that are aligned, reputation will continue to flow towards them until they have a majority. In particular, it is undesirable that if there is a $51\%$ block of aligned voters (that always vote together), all repution will flow towards them untial they reach $100\%$.
+
+\section{The Backfeed Protocol}
+
+[where we propose an actual function that satisfies some or all requirements above - perhaps not in this first version]
+
+\section{Appendix}
+[where we do  maths, proofs, difficult stuff]
+
+\section{References}
+
+\section{The Protocol Applied to Curating the Whitelist of the DAO}
+
+{\em (notes that should go to the other whitepaper) }
+\begin{itemize}
+\item Punishing inactive voters is actually a very nice thing: it means that curators that just do not feel like working can simply stop evaluating, and gradually transfer their control to the other voters, on the basis of the consensus within that group.
+\end{itemize}
+
+\begin{enumerate}
+\item https://www.oasis-open.org/committees/download.php/28303/JIB2007-DSS-Survey.pdf
+\end{enumerate}
+
+\end{document}
